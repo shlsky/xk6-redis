@@ -507,25 +507,39 @@ func (c *Client) Rpop(key string) *sobek.Promise {
 // offsets start and stop are zero-based indexes. These offsets can be
 // negative numbers, where they indicate offsets starting at the end of
 // the list.
-func (c *Client) Lrange(key string, start, stop int64) *sobek.Promise {
-	promise, resolve, reject := c.makeHandledPromise()
+//func (c *Client) Lrange(key string, start, stop int64) *sobek.Promise {
+//	promise, resolve, reject := c.makeHandledPromise()
+//
+//	if err := c.connect(); err != nil {
+//		reject(err)
+//		return promise
+//	}
+//
+//	go func() {
+//		values, err := c.redisClient.LRange(c.vu.Context(), key, start, stop).Result()
+//		if err != nil {
+//			reject(err)
+//			return
+//		}
+//
+//		resolve(values)
+//	}()
+//
+//	return promise
+//}
+
+func (c *Client) Lrange(key string, start, stop int64) []string {
 
 	if err := c.connect(); err != nil {
-		reject(err)
-		return promise
+		return nil
 	}
 
-	go func() {
-		values, err := c.redisClient.LRange(c.vu.Context(), key, start, stop).Result()
-		if err != nil {
-			reject(err)
-			return
-		}
+	values, err := c.redisClient.LRange(c.vu.Context(), key, start, stop).Result()
+	if err != nil {
+		return nil
+	}
 
-		resolve(values)
-	}()
-
-	return promise
+	return values
 }
 
 // Lindex returns the specified element of the list stored at `key`.
