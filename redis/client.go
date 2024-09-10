@@ -9,7 +9,6 @@ import (
 
 	"github.com/grafana/sobek"
 	"github.com/redis/go-redis/v9"
-	"go.k6.io/k6/js/common"
 	"go.k6.io/k6/js/modules"
 	"go.k6.io/k6/lib"
 )
@@ -1071,9 +1070,9 @@ func (c *Client) connect() error {
 	// init context. Thus, the Connect method will error if
 	// called in the init context.
 	vuState := c.vu.State()
-	if vuState == nil {
-		return common.NewInitContextError("connecting to a redis server in the init context is not supported")
-	}
+	//if vuState == nil {
+	//	return common.NewInitContextError("connecting to a redis server in the init context is not supported")
+	//}
 
 	// If the redisClient is already instantiated, it is safe
 	// to assume that the connection is already established.
@@ -1082,7 +1081,7 @@ func (c *Client) connect() error {
 	}
 
 	tlsCfg := c.redisOptions.TLSConfig
-	if tlsCfg != nil && vuState.TLSConfig != nil {
+	if tlsCfg != nil && vuState != nil && vuState.TLSConfig != nil {
 		// Merge k6 TLS configuration with the one we received from the
 		// Client constructor. This will need adjusting depending on which
 		// options we want to expose in the Redis module, and how we want
@@ -1110,7 +1109,7 @@ func (c *Client) connect() error {
 		//
 		// [discussion]: https://github.com/grafana/xk6-redis/pull/17#discussion_r1369707388
 		c.redisOptions.Dialer = c.upgradeDialerToTLS(vuState.Dialer, tlsCfg)
-	} else {
+	} else if vuState != nil {
 		c.redisOptions.Dialer = vuState.Dialer.DialContext
 	}
 
