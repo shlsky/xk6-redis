@@ -1,4 +1,4 @@
-module github.com/grafana/xk6-redis
+module github.com/shlsky/xk6-redis
 
 go 1.20
 
